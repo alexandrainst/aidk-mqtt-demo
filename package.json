@@ -1,0 +1,45 @@
+{
+	"name": "aidk-mqtt-demo",
+	"version": "0.0.1",
+	"author": {
+		"name": "Alexandre Alapetite",
+		"email": "alexandre.alapetite@alexandra.dk",
+		"url": "https://github.com/Alkarex"
+	},
+	"description": "Demo to store MQTT data in PostgreSQL using Node.js with Docker",
+	"keywords": [
+		"MQTT",
+		"PostgreSQL",
+		"Node.js",
+		"Docker"
+	],
+	"homepage": "https://github.com/alexandrainst/aidk-mqtt-demo",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/alexandrainst/aidk-mqtt-demo.git"
+	},
+	"bugs": {
+		"url": "https://github.com/alexandrainst/aidk-mqtt-demo/issues"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"dependencies": {
+		"mqtt": "^5.3.5",
+		"pg": "^8.11.3"
+	},
+	"devDependencies": {
+		"eslint": "^8.56.0",
+		"eslint-config-standard": "^17.1.0",
+		"markdownlint-cli": "^0.39.0"
+	},
+	"scripts": {
+		"start": "node ./index.js",
+		"eslint": "eslint --ext .js .",
+		"eslint_fix": "eslint --fix --ext .js .",
+		"markdownlint": "markdownlint '**/*.md'",
+		"markdownlint_fix": "markdownlint --fix '**/*.md'",
+		"test": "npm run eslint && npm run markdownlint",
+		"fix": "npm run eslint_fix && npm run markdownlint_fix"
+	}
+}
