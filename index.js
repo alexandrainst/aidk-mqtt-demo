@@ -1,46 +1,90 @@
 'use strict';
 
-const mqtt = require('mqtt');
-const client = mqtt.connect(process.env.MQTT_SERVER_URL || 'mqtt://localhost', {
+import { Client } from 'pg';
+import mqtt from 'mqtt';
+
+// <PostgreSQL>
+// Note: Uses environment variables by default
+// https://node-postgres.com/features/connecting#environment-variables
+const pgClient = new Client();
+
+async function done() {
+	if (pgClient) {
+		await pgClient.end();
+	}
+	process.exit(0);
+}
+
+pgClient.on('error', (err) => {
+	console.error(err);
+	done();
+});
+
+async function store(time, topic, message) {
+	try {
+		const sql = `
+INSERT INTO mqtt (time, topic, message)
+VALUES ($1, $2, $3)
+`;
+		await pgClient.query(sql, [time, topic, message]);
+	} catch (err) {
+		console.error(err);
+		done();
+		// Note: The container should be set up to automatically restart
+	}
+}
+
+await pgClient.connect();
+// </PostgreSQL>
+
+// <MQTT>
+// https://github.com/mqttjs/MQTT.js
+const mqttClient = mqtt.connect(process.env.MQTT_SERVER_URL || 'mqtt://localhost', {
 	username: process.env.MQTT_USERNAME || '',
 	password: process.env.MQTT_PASSWORD || '',
 });
 
-client.on('close', () => {
-	console.log('==== MQTT closed ====');
+mqttClient.on('close', () => {
+	console.error('==== MQTT closed ====');
+	done();
 });
 
-client.on('connect', () => {
-	console.log('==== MQTT connected ====');
+mqttClient.on('connect', () => {
+	console.error('==== MQTT connected ====');
 });
 
-client.on('disconnect', () => {
-	console.log('==== MQTT disconnected ====');
+mqttClient.on('disconnect', () => {
+	console.error('==== MQTT disconnected ====');
+	done();
 });
 
-client.on('error', (error) => {
-	console.log('==== MQTT error ' + error + ' ====');
+mqttClient.on('error', (error) => {
+	console.error('==== MQTT error ' + error + ' ====');
+	done();
 });
 
-client.on('message', (topic, message) => {
+mqttClient.on('message', async (topic, message) => {
 	// message is Buffer
-	console.log(topic + ' > ' + message.toString());
+	const time = (new Date()).toISOString();
+	console.log(time + ':\t' + topic + '\t>\t' + message.toString());
+	await store(time, topic, message.toString());
 });
 
-client.on('offline', () => {
-	console.log('==== MQTT offline ====');
+mqttClient.on('offline', () => {
+	console.error('==== MQTT offline ====');
 });
 
-client.on('reconnect', () => {
-	console.log('==== MQTT reconnected ====');
+mqttClient.on('reconnect', () => {
+	console.error('==== MQTT reconnected ====');
 });
+// </MQTT>
 
 process.on('SIGINT', () => {
 	console.error('==== Interrupted ====');
-	process.exit(0);
+	done();
 });
 
 process.on('SIGTERM', () => {
 	console.error('==== Terminated ====');
-	process.exit(0);
+	done();
 });
