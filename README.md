@@ -32,18 +32,23 @@ PGDATABASE=iot
 ### 1 Start stack
 
 ```sh
+cd mqtt-demo/
 docker-compose pull
 docker-compose build --pull
 docker-compose up
+# When done, [CONTROL]+[C]
+docker-compose down --volumes
 ```
 
 ### 2 Publish on MQTT
+
+In another process:
 
 ```sh
 docker exec mosquitto mosquitto_pub -t 'test' -m '{"Hello": "World"}'
 ```
 
-Optionally in another process, listen to MQTT:
+Optionally, in yet another process, listen to MQTT:
 
 ```sh
 docker exec mosquitto mosquitto_sub -t '#' -v
