@@ -1,11 +1,9 @@
 # MQTT to PostgreSQL demo in Node.js with Docker
 
-## A few preliminary commands
+## Some commands for development
 
 ```sh
 npm install
-
-# For development
 npm run-script fix
 npm test
 npm run
@@ -20,15 +18,15 @@ MQTT_SERVER_URL=mqtt://mosquitto
 MQTT_USERNAME=
 MQTT_PASSWORD=
 
-PGUSER=iot
 PGHOST=postgres
+PGUSER=iot
 PGPASSWORD=CRxVcSPsB704
 PGDATABASE=iot
 ```
 
 ## Manual commands to experiment
 
-### 1 Start stack
+### 1. Start stack
 
 ```sh
 cd mqtt-demo/
@@ -39,7 +37,7 @@ docker-compose up
 docker-compose down --volumes
 ```
 
-### 2 Publish on MQTT
+### 2. Publish on MQTT
 
 In another process:
 
@@ -53,8 +51,8 @@ Optionally, in yet another process, listen to MQTT:
 docker exec mosquitto mosquitto_sub -t '#' -v
 ```
 
-### 3 Check data in PostgreSQL
+### 3. Check data in PostgreSQL
 
 ```sh
-docker exec -it postgres psql -d iot -U iot -c 'SELECT * FROM mqtt ORDER BY id DESC LIMIT 10;'
+docker exec postgres psql -d iot -U iot -c 'SELECT * FROM mqtt ORDER BY id DESC LIMIT 10;'
 ```
