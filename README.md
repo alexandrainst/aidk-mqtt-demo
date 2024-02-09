@@ -29,7 +29,7 @@ PGDATABASE=iot
 
 ## Manual commands to experiment
 
-## 1 Start stack
+### 1 Start stack
 
 ```sh
 docker-compose pull
@@ -37,7 +37,7 @@ docker-compose build --pull
 docker-compose up
 ```
 
-## 2 Publish on MQTT
+### 2 Publish on MQTT
 
 ```sh
 docker exec mosquitto mosquitto_pub -t 'test' -m '{"Hello": "World"}'
