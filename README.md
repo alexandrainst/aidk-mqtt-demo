@@ -8,7 +8,6 @@ npm install
 # For development
 npm run-script fix
 npm test
-
 npm run
 ```
 
