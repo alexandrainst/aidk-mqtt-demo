@@ -1,0 +1,56 @@
+volumes:
+  mosquitto-data:
+  mosquitto-log:
+  postgres-data:
+
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    logging:
+      options:
+        max-size: 10m
+    ports:
+      - "1883:1883"
+    restart: unless-stopped
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  node:
+    image: senti-iot/node
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: node
+    depends_on:
+      - mosquitto
+      - postgres
+    logging:
+      options:
+        max-size: 10m
+    restart: unless-stopped
+    environment:
+      MQTT_SERVER_URL: ${MQTT_SERVER_URL}
+      PGDATABASE: ${PGDATABASE}
+      PGHOST: ${PGHOST}
+      PGPASSWORD: ${PGPASSWORD}
+      PGUSER: ${PGUSER}
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    hostname: postgres
+    logging:
+      options:
+        max-size: 10m
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres.sql:/docker-entrypoint-initdb.d/mqtt.sql:ro
+    environment:
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}

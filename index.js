@@ -1,12 +1,12 @@
 'use strict';
 
-import { Client } from 'pg';
+import pg from 'pg';
 import mqtt from 'mqtt';
 
 // <PostgreSQL>
 // Note: Uses environment variables by default
 // https://node-postgres.com/features/connecting#environment-variables
-const pgClient = new Client();
+const pgClient = new pg.Client();
 
 async function done() {
 	if (pgClient) {
@@ -23,7 +23,7 @@ pgClient.on('error', (err) => {
 async function store(time, topic, message) {
 	try {
 		const sql = `
-INSERT INTO mqtt (time, topic, message)
+INSERT INTO mqtt (time, topic, data)
 VALUES ($1, $2, $3)
 `;
 		await pgClient.query(sql, [time, topic, message]);
@@ -51,6 +51,13 @@ mqttClient.on('close', () => {
 
 mqttClient.on('connect', () => {
 	console.error('==== MQTT connected ====');
+	mqttClient.subscribe('#', (err) => {
+		if (err) {
+			console.error(err);
+		} else {
+			console.error('==== MQTT subscribed ====');
+		}
+	});
 });
 
 mqttClient.on('disconnect', () => {

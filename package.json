@@ -1,5 +1,6 @@
 {
 	"name": "aidk-mqtt-demo",
+	"type": "module",
 	"version": "0.0.1",
 	"author": {
 		"name": "Alexandre Alapetite",
