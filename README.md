@@ -27,7 +27,7 @@ PGPASSWORD=CRxVcSPsB704
 PGDATABASE=iot
 ```
 
-## Manual commands to experiments
+## Manual commands to experiment
 
 ## 1 Start stack
 
