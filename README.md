@@ -56,3 +56,14 @@ docker exec mosquitto mosquitto_sub -t '#' -v
 ```sh
 docker exec postgres psql -d iot -U iot -c 'SELECT * FROM mqtt ORDER BY id DESC LIMIT 10;'
 ```
+
+### 4. Manual changes to database
+
+```sh
+docker exec -it postgres psql -d iot -U iot
+\dt
+```
+
+```sql
+ALTER TABLE mqtt ADD COLUMN comment TEXT;
+```
