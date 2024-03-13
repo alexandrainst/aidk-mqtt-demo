@@ -67,3 +67,9 @@ docker exec -it postgres psql -d iot -U iot
 ```sql
 ALTER TABLE mqtt ADD COLUMN comment TEXT;
 ```
+
+Or re-run the [init script](./mqtt-demo/postgres.sql) if it was modified:
+
+```sh
+docker exec postgres psql -d iot -U iot -a -f /docker-entrypoint-initdb.d/mqtt.sql
+```
